@@ -1,0 +1,38 @@
+{
+  "name": "oil-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Premium Iranian automotive oil & lubricant e-commerce platform (Next.js + Prisma)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "node scripts/start.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "bcryptjs": "^2.4.3",
+    "ioredis": "^5.4.1",
+    "jose": "^5.9.6",
+    "next": "^15.5.23",
+    "prisma": "^6.2.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.4",
+    "@types/react-dom": "^19.0.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  }
+}

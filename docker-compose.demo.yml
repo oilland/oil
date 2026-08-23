@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────
+#  Oil Shop — QUICK DEMO stack (single container + SQLite)
+#  No Postgres/Redis needed. Great for showing a client fast.
+#  Deploy:  docker compose -f docker-compose.demo.yml up -d --build
+#  Data persists in the "demo-data" volume.
+# ─────────────────────────────────────────────────────────────
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: file:/data/dev.db
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    volumes:
+      - demo-data:/data
+
+volumes:
+  demo-data:

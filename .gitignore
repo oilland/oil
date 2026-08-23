@@ -1,0 +1,24 @@
+node_modules
+.next
+out
+dist
+build
+*.tsbuildinfo
+next-env.d.ts
+
+.env
+.env.local
+.env.production
+
+# local dev database files (SQLite leftovers — PostgreSQL is used now)
+prisma/dev.db
+prisma/dev.db-journal
+*.db
+
+.DS_Store
+*.log
+package-lock.json
+
+# آپلودهای کاربران (ذخیره‌سازی محلی — نباید commit شوند)
+/uploads
+public/uploads
