@@ -97,8 +97,8 @@ if (!token) {
 console.log(`\n▶ push به ${remote} (شاخه ${branch})…`);
 try {
   if (token && /github\.com/.test(remote)) {
-    const auth = remote.replace('https://', `https://x-access-token:${token}@`);
-    run(`git push -u ${auth} ${branch}`);
+    const header = `AUTHORIZATION: bearer ${token}`;
+    run(`git -c http.extraHeader="${header}" push -u origin ${branch}`);
   } else {
     run(`git push -u origin ${branch}`);
   }
