@@ -15,6 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <Sidebar perms={session.perms} isSuper={isSuper} userName={session.name} logoUrl={settings.logoUrl} />
       <main className="lg:ms-0 lg:pr-64">
         <div className="mx-auto max-w-7xl p-4 md:p-6 lg:p-8">{children}</div>
+        <p className="pb-6 text-center text-[11px] text-slate-400">طراحی و توسعه: seytare team</p>
       </main>
     </div>
   );

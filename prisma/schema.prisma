@@ -550,3 +550,14 @@ model SiteSetting {
   group     String   @default("general")
   updatedAt DateTime @updatedAt
 }
+
+// فایل‌های آپلودی (اسلایدر، محصول، لوگو، …) — ماندگار در PostgreSQL
+// تا روی لیارا با ری‌استارت/دیپلوی از بین نروند. دیسک فقط کش است.
+model MediaFile {
+  id        String   @id @default(cuid())
+  filename  String   @unique
+  mime      String
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+}

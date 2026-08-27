@@ -1,0 +1,9 @@
+#!/bin/sh
+# بعد از هر کامیت، خودکار به origin پوش می‌شود.
+# برای جلوگیری از حلقه، push.js متغیر SKIP_AUTO_PUSH=1 می‌گذارد.
+if [ "$SKIP_AUTO_PUSH" = "1" ]; then
+  exit 0
+fi
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 0
+git remote get-url origin >/dev/null 2>&1 || exit 0
+git push -u origin "$branch" >/dev/null 2>&1 || true

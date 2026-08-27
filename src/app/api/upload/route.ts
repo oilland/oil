@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'node:fs/promises';
-import path from 'node:path';
 import crypto from 'node:crypto';
 import { getSession } from '@/lib/session';
 import { hasPermission } from '@/lib/permissions';
 import { compressImage } from '@/lib/image-compress';
+import { saveMediaFile } from '@/lib/media';
 
 const ALLOWED: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -47,12 +46,17 @@ export async function POST(req: NextRequest) {
     const { data, ext } = await compressImage(buf, file.type);
 
     const name = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
-    // عکس‌ها خارج از پوشهٔ public ذخیره می‌شوند و از طریق route مخصوص
-    // /uploads/[...path] سرو می‌شوند؛ چون Next.js در حالت production فایل‌های
-    // افزوده‌شده به public را بعد از build نمایش نمی‌دهد.
-    const dir = path.join(process.cwd(), 'uploads');
-    await mkdir(dir, { recursive: true });
-    await writeFile(path.join(dir, name), data);
+    // ماندگار در PostgreSQL (+ کش دیسک). روی لیارا بدون Disk، فقط دیتابیس
+    // جلوی پریدن عکس بعد از دیپلوی/ری‌استارت را می‌گیرد.
+    const mime = ALLOWED[file.type] === ext ? file.type : (
+      ext === 'jpg' ? 'image/jpeg' :
+      ext === 'png' ? 'image/png' :
+      ext === 'webp' ? 'image/webp' :
+      ext === 'avif' ? 'image/avif' :
+      ext === 'gif' ? 'image/gif' :
+      ext === 'svg' ? 'image/svg+xml' : file.type
+    );
+    await saveMediaFile(name, data, mime);
 
     return NextResponse.json({ url: `/uploads/${name}`, name });
   } catch (e) {

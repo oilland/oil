@@ -23,7 +23,8 @@ import {
   IconUser,
   IconLogOut,
   IconX,
-  IconMenu
+  IconMenu,
+  IconSparkles
 } from '@/components/icons';
 
 type NavItem = { href: string; label: string; icon: ComponentType<{ className?: string }>; perm?: string };
@@ -53,6 +54,7 @@ const GROUPS: NavGroup[] = [
   {
     title: 'محتوا',
     items: [
+      { href: '/admin/seo', label: 'دستیار سئو', icon: IconSparkles, perm: 'settings.manage' },
       { href: '/admin/homepage', label: 'صفحه اصلی', icon: IconHome, perm: 'content.manage' },
       { href: '/admin/blog', label: 'وبلاگ', icon: IconFileText, perm: 'blog.manage' },
       { href: '/admin/pages', label: 'صفحات', icon: IconFileText, perm: 'content.manage' },
@@ -138,6 +140,7 @@ export function Sidebar({
             <IconLogOut className="h-5 w-5" /> خروج
           </button>
         </form>
+        <p className="mt-3 px-3 text-center text-[10px] leading-5 text-slate-500">طراحی و توسعه: seytare team</p>
       </div>
     </div>
   );

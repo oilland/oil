@@ -108,15 +108,17 @@ export async function queryProducts(input: ProductQuery) {
     where.id = { in: compats.map((c) => c.productId) };
   }
 
-  const orderBy: Prisma.ProductOrderByWithRelationInput =
+  // Prisma در حالت شیء تکی فقط یک فیلد orderBy قبول می‌کند.
+  // sort=bestseller قبلاً دو فیلد در یک شیء می‌فرستاد و صفحه را در پروداکشن می‌ترکاند.
+  const orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[] =
     input.sort === 'price-asc'
       ? { price: 'asc' }
       : input.sort === 'price-desc'
         ? { price: 'desc' }
         : input.sort === 'rating'
-          ? { averageRating: 'desc' }
+          ? [{ averageRating: 'desc' }, { ratingCount: 'desc' }]
           : input.sort === 'bestseller'
-            ? { isBestSeller: 'desc', ratingCount: 'desc' }
+            ? [{ isBestSeller: 'desc' }, { ratingCount: 'desc' }, { createdAt: 'desc' }]
             : { createdAt: 'desc' };
 
   const page = Math.max(1, Number(input.page) || 1);

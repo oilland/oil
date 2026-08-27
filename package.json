@@ -10,7 +10,10 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "push": "node scripts/push.js",
+    "hooks": "node scripts/install-hooks.js",
+    "prepare": "node scripts/install-hooks.js"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",

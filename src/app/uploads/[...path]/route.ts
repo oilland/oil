@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
+import { readMediaFile } from '@/lib/media';
 
 /**
  * سرو فایل‌های آپلودی.
- * عکس‌های آپلودشده در پوشهٔ «uploads» (خارج از public) ذخیره می‌شوند و از این
- * مسیر نمایش داده می‌شوند؛ چون Next.js در حالت production، فایل‌هایی که بعد از
- * build به public اضافه شوند را سرو نمی‌کند.
+ * منبع حقیقت: جدول MediaFile در PostgreSQL (روی لیارا ماندگار است).
+ * دیسک فقط کش است.
  */
 export const dynamic = 'force-dynamic';
 
@@ -38,18 +36,17 @@ export async function GET(
     return new NextResponse('Not found', { status: 404 });
   }
 
-  const file = path.join(process.cwd(), 'uploads', name);
-  try {
-    const buf = await readFile(file);
-    return new NextResponse(new Uint8Array(buf), {
-      status: 200,
-      headers: {
-        'Content-Type': mime,
-        'Cache-Control': 'public, max-age=31536000, immutable',
-        'Content-Disposition': 'inline'
-      }
-    });
-  } catch {
+  const file = await readMediaFile(name);
+  if (!file) {
     return new NextResponse('Not found', { status: 404 });
   }
+
+  return new NextResponse(new Uint8Array(file.data), {
+    status: 200,
+    headers: {
+      'Content-Type': file.mime || mime,
+      'Cache-Control': 'public, max-age=31536000, immutable',
+      'Content-Disposition': 'inline'
+    }
+  });
 }

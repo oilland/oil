@@ -33,7 +33,11 @@ export interface SiteSettings {
   receiptApp: string;
   receiptNumber: string;
   cardNote: string;
-  [key: string]: string | number | boolean;
+  aiBaseUrl: string;
+  aiApiKey: string;
+  aiModel: string;
+  seoAutoMode: string; // 'review' | 'auto'
+  [key: string]: unknown;
 }
 
 const DEFAULTS: SiteSettings = {
@@ -65,7 +69,11 @@ const DEFAULTS: SiteSettings = {
   cardSheba: '',
   receiptApp: '',
   receiptNumber: '',
-  cardNote: ''
+  cardNote: '',
+  aiBaseUrl: '',
+  aiApiKey: '',
+  aiModel: 'openai/gpt-4o-mini',
+  seoAutoMode: 'review'
 };
 
 export async function getSettings(): Promise<SiteSettings> {

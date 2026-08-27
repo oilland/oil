@@ -135,6 +135,7 @@ export function Footer({
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-slate-500 sm:flex-row">
           <p>© {new Intl.DateTimeFormat('fa-IR').format(new Date())} {settings.storeName} — تمامی حقوق محفوظ است.</p>
+          <p className="text-slate-400">طراحی و توسعه: seytare team</p>
           <div className="flex items-center gap-4">
             <Link href="/page/terms" className="hover:text-slate-300">شرایط استفاده</Link>
             <Link href="/page/privacy" className="hover:text-slate-300">حریم خصوصی</Link>
