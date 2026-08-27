@@ -22,3 +22,6 @@ package-lock.json
 # آپلودهای کاربران (ذخیره‌سازی محلی — نباید commit شوند)
 /uploads
 public/uploads
+
+# توکن ارسال گیت‌هاب (فقط روی سیستم محلی)
+.git-push-token

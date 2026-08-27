@@ -85,7 +85,14 @@ if (!staged) {
 }
 
 const branch = sh('git rev-parse --abbrev-ref HEAD') || 'main';
-const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
+let token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
+if (!token) {
+  try {
+    token = fs.readFileSync(path.join(ROOT, '.git-push-token'), 'utf8').trim();
+  } catch {
+    /* no saved token */
+  }
+}
 
 console.log(`\n▶ push به ${remote} (شاخه ${branch})…`);
 try {
