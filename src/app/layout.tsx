@@ -15,7 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
       },
       description: s.metaDescription,
       icons: { icon: s.faviconUrl || '/images/logo.png' },
-      robots: { index: true, follow: true }
+      robots: { index: true, follow: true },
+      verification: { google: 'lPvRcTOeDTp865xqCCinACzOM0ntzu6DJ5r7Pb9js3A' }
     };
   } catch {
     return {
