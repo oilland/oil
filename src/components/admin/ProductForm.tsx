@@ -68,7 +68,13 @@ export function ProductForm({ product, options }: { product: ProductFormData | n
           </div>
           <div className="sm:col-span-2">
             <label className="label">توضیحات کامل</label>
-            <textarea name="description" rows={4} defaultValue={p?.description ?? ''} className="input resize-none" />
+            <textarea
+              name="description"
+              rows={10}
+              defaultValue={p?.description ?? ''}
+              className="input resize-y leading-7"
+              placeholder="هر پاراگراف را با یک خط خالی از هم جدا کنید"
+            />
           </div>
         </div>
       </div>

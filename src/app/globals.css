@@ -132,3 +132,63 @@
     color: transparent;
   }
 }
+
+/* Blog / product / page body — Tailwind preflight zeros p/h/ul margins */
+.rich-text {
+  line-height: 1.95;
+  color: #334155;
+}
+.rich-text p {
+  margin: 0 0 1.15em;
+}
+.rich-text p:last-child {
+  margin-bottom: 0;
+}
+.rich-text h1,
+.rich-text h2,
+.rich-text h3,
+.rich-text h4 {
+  color: #0f172a;
+  font-weight: 800;
+  line-height: 1.5;
+  margin: 1.5em 0 0.55em;
+}
+.rich-text h1 { font-size: 1.5rem; }
+.rich-text h2 { font-size: 1.25rem; }
+.rich-text h3 { font-size: 1.1rem; }
+.rich-text ul,
+.rich-text ol {
+  margin: 0.9em 0 1.2em;
+  padding-inline-start: 1.5rem;
+}
+.rich-text ul { list-style: disc; }
+.rich-text ol { list-style: decimal; }
+.rich-text li { margin: 0.4em 0; }
+.rich-text a {
+  color: #0c6b5e;
+  font-weight: 600;
+  text-decoration: underline;
+}
+.rich-text strong,
+.rich-text b {
+  color: #0f172a;
+  font-weight: 700;
+}
+.rich-text img {
+  display: block;
+  width: 100%;
+  margin: 1.25em 0;
+  border-radius: 0.75rem;
+}
+.rich-text blockquote {
+  margin: 1.1em 0;
+  border-right: 4px solid #47b896;
+  background: #f8fafc;
+  padding: 0.75em 1em;
+  color: #475569;
+}
+.rich-text hr {
+  margin: 1.5em 0;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+}

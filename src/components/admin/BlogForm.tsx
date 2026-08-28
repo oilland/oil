@@ -38,8 +38,14 @@ export function BlogForm({
             <input name="excerpt" defaultValue={post?.excerpt ?? ''} className="input" />
           </div>
           <div className="sm:col-span-2">
-            <label className="label">متن مقاله (HTML)</label>
-            <textarea name="content" rows={10} defaultValue={post?.content ?? ''} className="input resize-y font-mono text-xs leading-6" dir="ltr" placeholder="<p>متن مقاله…</p>" />
+            <label className="label">متن مقاله</label>
+            <textarea
+              name="content"
+              rows={16}
+              defaultValue={post?.content ?? ''}
+              className="input resize-y leading-7"
+              placeholder="متن را با پاراگراف بنویسید. بین پاراگراف‌ها یک خط خالی بگذارید. HTML هم قبول است."
+            />
           </div>
           <div>
             <label className="label">دسته‌بندی</label>

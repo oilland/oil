@@ -11,6 +11,7 @@ import { ProductActions } from '@/components/shop/ProductActions';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { Stars, SectionHeading } from '@/components/ui';
 import { IconTruck, IconShield, IconRefresh, IconCheck } from '@/components/icons';
+import { RichText } from '@/components/shop/RichText';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -181,12 +182,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               id: 'desc',
               label: 'توضیحات',
               content: (
-                <div className="prose-sm max-w-3xl leading-8 text-slate-600">
-                  {product.description ? (
-                    <p>{product.description}</p>
-                  ) : (
-                    <p>{product.shortDescription}</p>
-                  )}
+                <div className="max-w-3xl">
+                  <RichText html={product.description || product.shortDescription} />
                 </div>
               )
             },

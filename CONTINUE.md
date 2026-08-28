@@ -2,8 +2,7 @@
 
 پروژه: **OilLand / روغن‌لند**  
 ریپو: https://github.com/oilland/oil (شاخه `main`)  
-سایت: لیارا · `oilland.shop`  
-آخرین کامیت گیت‌هاب: `ef9c7e9` — ۱۴۰۵/۶/۵ ۱۳:۱۶
+سایت: لیارا · `oilland.shop`
 
 ---
 
@@ -24,60 +23,51 @@
 
 ### توکن در چت جدید
 
-توکن داخل گیت‌هاب ذخیره نمی‌شود (رمز است).  
-اگر چت جدید محیط خالی باشد، **یک‌بار** همان توکن را داخل صفحه CMD بچسبان — نه داخل چت. بعدش فقط کلیک.
+توکن داخل گیت‌هاب ذخیره نمی‌شود. اگر محیط خالی باشد یک‌بار داخل صفحه CMD بچسبان — نه داخل چت.
 
 ---
 
-## دستیار آخر هر کار حتماً این‌ها را بزند
+## دستیار آخر هر کار
 
 ```bash
 npm run ship
-# اگر پوش خطا داد:
-node scripts/github-oneclick.js
 ```
 
-`npm run ship` = زیپ لیارا (`/home/user/oilland-liara.zip` بدون package-lock) + commit/push.
+زیپ: `/home/user/oilland-liara.zip` (بدون package-lock). با present_file نشان بده.
 
-زیپ را با present_file نشان بده.
-
-**ممنوع:** `"prepare": "node scripts/install-hooks.js"` در package.json — لیارا می‌ترکد.
+**ممنوع:** `"prepare"` در package.json.
 
 ---
 
 ## قوانین دیتا
 
-- هیچ `migrate reset` / seed روی لایو
-- عکس آپلودی در جدول `MediaFile` (Postgres) است
+- هیچ migrate reset / seed روی لایو
+- عکس آپلودی در جدول MediaFile
 - سید فقط اگر دیتابیس خالی باشد
 
 ---
 
-## وضعیت تا اینجا
+## وضعیت
 
 | مورد | |
 |---|---|
-| فروشگاه Next 15 + Prisma + Postgres، فارسی | لایو لیارا |
-| کارت‌به‌کارت / COD / آنلاین mock | زرین‌پال واقعی نه |
-| دستیار سئو `/admin/seo` + sitemap + robots | هست |
-| بیلد لیارا بدون دیتابیس (sitemap داینامیک) | رفع شده |
-| زیپ بدون package-lock | اجباری |
-| پرفروش‌ترین‌ها `/products?sort=bestseller` | رفع شده |
-| عکس آپلودی ماندگار در DB + فشرده‌سازی sharp | هست |
-| فوتر: طراحی و توسعه: seytare team | هست |
-| CMD یک‌کلیک گیت‌هاب | هست — توکن را در چت نگیر |
-| حذف prepare (خطای لیارا) | در package.json نباشد |
+| فروشگاه Next 15 + Prisma + Postgres | لایو |
+| Search Console | وریفای شد؛ صفحه اصلی ایندکس |
+| تگ google-site-verification | در layout |
+| سئو فنی (metadataBase دامنه واقعی، OG، sitemap `?cat=`) | هست |
+| فاصله پاراگراف وبلاگ/توضیح محصول (RichText) | رفع شده — دیپلوی این زیپ |
+| CMD یک‌کلیک گیت‌هاب | هست — توکن در چت نگیر |
+| فوتر seytare team | هست |
+| prepare در package.json | نباشد |
 
-مسیر پروژه: `/home/user/oil`
+مسیر: `/home/user/oil`
 
 ---
 
 ## کار بعدی
 
-1. زیپ فعلی را اگر هنوز روی لیارا نیست درگ کن
-2. اسلایدر اگر خالی بود یک‌بار آپلود (بعدش در DB می‌ماند)
-3. Search Console + زرین‌پال + SMS + کلید AI سئو
-
----
+1. زیپ را روی لیارا درگ کن
+2. در Search Console سایت‌مپ `sitemap.xml` اگر هنوز Submit نشده
+3. زرین‌پال / SMS وقتی خواستند
 
 *پروژه مستقل روغن‌لند.*

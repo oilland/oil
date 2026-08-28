@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { formatDate } from '@/lib/format';
 import { decodeSlug } from '@/lib/slug';
+import { RichText } from '@/components/shop/RichText';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -53,10 +54,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {post.coverImage && (
           <img src={post.coverImage} alt={post.title} className="mb-8 w-full rounded-2xl object-cover" />
         )}
-        <div
-          className="blog-content leading-9 text-slate-700"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <RichText html={post.content} />
         {post.tags && (
           <div className="mt-8 flex flex-wrap gap-2">
             {post.tags.split(',').filter(Boolean).map((t) => (
