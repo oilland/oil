@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
       ...statics,
       ...categories.map((c) => ({
-        url: `${BASE}/products?category=${encodeURIComponent(c.slug)}`,
+        url: `${BASE}/products?cat=${encodeURIComponent(c.slug)}`,
         changeFrequency: 'weekly' as const,
         priority: 0.6
       })),

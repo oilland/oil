@@ -16,9 +16,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'محصول یافت نشد' };
+  const title = product.seoTitle || product.name;
+  const description = product.seoDescription || product.shortDescription || product.name;
+  const image = product.images[0]?.url;
   return {
-    title: product.seoTitle || product.name,
-    description: product.seoDescription || product.shortDescription || product.name
+    title,
+    description,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      url: `/products/${product.slug}`,
+      images: image ? [{ url: image }] : undefined
+    }
   };
 }
 
@@ -58,9 +69,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     image: product.images[0]?.url,
     description: product.shortDescription ?? product.description,
     sku: product.sku,
+    url: `https://oilland.shop/products/${encodeURIComponent(product.slug)}`,
     brand: product.brand ? { '@type': 'Brand', name: product.brand.name } : undefined,
     offers: {
       '@type': 'Offer',
+      url: `https://oilland.shop/products/${encodeURIComponent(product.slug)}`,
       priceCurrency: 'IRR',
       price: actualPrice * 10, // toman → rial for schema correctness
       availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'

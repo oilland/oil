@@ -12,7 +12,13 @@ type SP = Record<string, string | string[] | undefined>;
 export async function generateMetadata({ searchParams }: { searchParams: Promise<SP> }): Promise<Metadata> {
   const sp = await searchParams;
   const q = typeof sp.q === 'string' ? sp.q : '';
-  return { title: q ? `جستجو: ${q}` : 'محصولات' };
+  return {
+    title: q ? `جستجو: ${q}` : 'محصولات',
+    description: q
+      ? `نتایج جستجو برای ${q} در فروشگاه سرزمین روغن`
+      : 'خرید روغن موتور، گیربکس و روانکار از فروشگاه سرزمین روغن',
+    alternates: { canonical: '/products' }
+  };
 }
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<SP> }) {

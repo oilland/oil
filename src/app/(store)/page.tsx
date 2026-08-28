@@ -54,8 +54,18 @@ export default async function HomePage() {
   const sec = (key: string) => sections.find((s) => s.key === key);
   const on = (key: string) => sec(key)?.enabled ?? true;
 
+  const orgLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Store',
+    name: settings.storeName,
+    url: 'https://oilland.shop',
+    description: settings.metaDescription,
+    inLanguage: 'fa-IR'
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
       {/* ── Hero ── */}
       {on('hero') && (
         <section className="container-x pt-6">

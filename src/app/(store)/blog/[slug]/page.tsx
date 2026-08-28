@@ -9,7 +9,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = await prisma.blogPost.findFirst({ where: { slug: decodeSlug(slug), status: 'published' } });
   if (!post) return { title: 'مقاله یافت نشد' };
-  return { title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt };
+  const title = post.seoTitle || post.title;
+  const description = post.seoDescription || post.excerpt || post.title;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: { type: 'article', title, description, images: post.coverImage ? [{ url: post.coverImage }] : undefined }
+  };
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
