@@ -15,10 +15,26 @@ const ALLOWED: Record<string, string> = {
 };
 const MAX_SIZE = 8 * 1024 * 1024; // 8MB
 
+const UPLOAD_PERMS = [
+  'products.create',
+  'products.edit',
+  'categories.manage',
+  'brands.manage',
+  'banners.manage',
+  'blog.manage',
+  'content.manage',
+  'settings.manage'
+];
+
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
-  // Only signed-in staff may upload
   const session = await getSession();
-  if (!hasPermission(session, 'products.create') && !hasPermission(session, 'settings.manage')) {
+  const allowed =
+    !!session &&
+    (session.role === 'ADMIN' || session.role === 'SUPER_ADMIN' || UPLOAD_PERMS.some((p) => hasPermission(session, p)));
+  if (!allowed) {
     return NextResponse.json({ error: 'دسترسی غیرمجاز' }, { status: 401 });
   }
 
@@ -58,9 +74,9 @@ export async function POST(req: NextRequest) {
     );
     await saveMediaFile(name, data, mime);
 
-    return NextResponse.json({ url: `/uploads/${name}`, name });
+    return NextResponse.json({ url: `/api/media/${name}`, name });
   } catch (e) {
     console.error('upload error:', e);
-    return NextResponse.json({ error: 'خطا در ذخیره فایل' }, { status: 500 });
+    return NextResponse.json({ error: 'خطا در ذخیره فایل در دیتابیس' }, { status: 500 });
   }
 }

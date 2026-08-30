@@ -10,7 +10,7 @@ import { ALL_PERMISSION_SLUGS } from './constants';
 import { uniqueSlug } from './slug';
 import { MIGRATION_SQL } from './migration-sql';
 import { INDUSTRIAL, MOTOR } from './seed-data';
-import { restoreMediaCacheFromDb } from './media';
+import { restoreMediaCacheFromDb, ensureMediaTable, rewriteUploadUrlsToApi } from './media';
 
 // ── Categories ───────────────────────────────────────────────────────────────
 const PARENT_CATS = [
@@ -110,20 +110,7 @@ async function tablesExist(): Promise<boolean> {
 
 /** پچ‌های schema برای دیتابیس‌های از قبل ساخته‌شده (لیارا) — idempotent */
 async function ensureSchemaPatches() {
-  await prisma.$executeRawUnsafe(`
-    CREATE TABLE IF NOT EXISTS "MediaFile" (
-      "id" TEXT NOT NULL,
-      "filename" TEXT NOT NULL,
-      "mime" TEXT NOT NULL,
-      "size" INTEGER NOT NULL,
-      "data" BYTEA NOT NULL,
-      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      CONSTRAINT "MediaFile_pkey" PRIMARY KEY ("id")
-    )
-  `);
-  await prisma.$executeRawUnsafe(`
-    CREATE UNIQUE INDEX IF NOT EXISTS "MediaFile_filename_key" ON "MediaFile"("filename")
-  `);
+  await ensureMediaTable();
 }
 
 async function createTables() {
@@ -353,6 +340,7 @@ async function setupDatabaseInner(): Promise<{ ok: boolean; error?: string }> {
     await ensureSchemaPatches();
     await seed();
     await restoreMediaCacheFromDb();
+    await rewriteUploadUrlsToApi();
 
     // repair: همیشه (حتی روی دیتابیس موجود) عکس‌های دسته‌بندی خالی را پر کن
     const ALL_CATS = [

@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   images: { unoptimized: true },
   poweredByHeader: false,
+  async rewrites() {
+    return [{ source: '/uploads/:path*', destination: '/api/media/:path*' }];
+  },
   async headers() {
     return [
       {

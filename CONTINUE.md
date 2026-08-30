@@ -55,7 +55,8 @@ npm run ship
 | Search Console | وریفای شد؛ صفحه اصلی ایندکس |
 | تگ google-site-verification | در layout |
 | سئو فنی (metadataBase دامنه واقعی، OG، sitemap `?cat=`) | هست |
-| فاصله پاراگراف وبلاگ/توضیح محصول (RichText) | رفع شده — دیپلوی این زیپ |
+| فاصله پاراگراف وبلاگ/توضیح محصول (RichText) | رفع شده |
+| عکس آپلودی در PostgreSQL + سرو از `/api/media` | رفع پریدن عکس بعد از ری‌استارت لیارا |
 | CMD یک‌کلیک گیت‌هاب | هست — توکن در چت نگیر |
 | فوتر seytare team | هست |
 | prepare در package.json | نباشد |
