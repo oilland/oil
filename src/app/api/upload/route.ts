@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     );
     await saveMediaFile(name, data, mime);
 
-    return NextResponse.json({ url: `/api/media/${encodeURIComponent(name)}`, name });
+    return NextResponse.json({ url: `/api/media/${name}`, name });
   } catch (e) {
     console.error('upload error:', e);
     return NextResponse.json({ error: 'خطا در ذخیره فایل در دیتابیس' }, { status: 500 });

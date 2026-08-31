@@ -25,9 +25,39 @@ export function mimeFromFilename(filename: string): string {
   return MIME_FROM_EXT[ext] || 'application/octet-stream';
 }
 
-/** نام اصلی فایل را برای سئو نگه می‌دارد (فاصله → خط تیره، کاراکتر خطرناک حذف). */
+/** اگر مرورگر/ویندوز نام فارسی را اشتباه فرستاده، UTF-8 درست را برمی‌گرداند. */
+export function decodeUploadedName(name: string): string {
+  let s = (name || '').trim();
+  if (!s) return s;
+  if (/^utf-8''/i.test(s)) {
+    try {
+      s = decodeURIComponent(s.replace(/^utf-8''/i, ''));
+    } catch {
+      /* ignore */
+    }
+  }
+  try {
+    if (/%[0-9A-Fa-f]{2}/.test(s)) s = decodeURIComponent(s);
+  } catch {
+    /* ignore */
+  }
+  // UTF-8 که به‌اشتباه Latin-1 خوانده شده (Ø±ÙˆØºÙ† به‌جای روغن)
+  if (/[ØÙÃÆåæ]/u.test(s) && !/[\u0600-\u06FF]/.test(s)) {
+    try {
+      const utf8 = Buffer.from(s, 'latin1').toString('utf8');
+      if (/[\u0600-\u06FF]/.test(utf8) && !utf8.includes('\uFFFD')) s = utf8;
+    } catch {
+      /* ignore */
+    }
+  }
+  return s;
+}
+
+const PERSIAN_OK = /[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFFa-zA-Z0-9._-]+/g;
+
+/** نام اصلی فایل را برای سئو نگه می‌دارد (فاصله → خط تیره، حروف فارسی سالم می‌مانند). */
 export function seoFilename(original: string, ext: string): string {
-  const base = (original || '').replace(/\\/g, '/').split('/').pop() || '';
+  const base = decodeUploadedName(original).replace(/\\/g, '/').split('/').pop() || '';
   let stem = base.replace(/\.[^.]+$/, '');
   try {
     stem = stem.normalize('NFC');
@@ -35,19 +65,22 @@ export function seoFilename(original: string, ext: string): string {
     /* ignore */
   }
   stem = stem
+    .replace(/[\u200c\u200d\u00a0]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/[^\p{L}\p{N}._-]+/gu, '-')
+    .replace(PERSIAN_OK, '-')
     .replace(/-+/g, '-')
     .replace(/^[.-]+|[.-]+$/g, '')
-    .toLowerCase();
+    .replace(/[A-Z]/g, (c) => c.toLowerCase());
   if (stem.length > 80) stem = stem.slice(0, 80).replace(/-+$/g, '');
   if (!stem) stem = `image-${Date.now()}`;
   const e = ext.replace(/^\./, '').toLowerCase();
   return `${stem}.${e}`;
 }
 
+const SAFE_NAME = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFFa-zA-Z0-9._-]+$/;
+
 export function isSafeMediaName(name: string): boolean {
-  return /^[\p{L}\p{N}._-]+$/u.test(name) && !name.includes('..') && name.length <= 120;
+  return !!name && name.length <= 120 && !name.includes('..') && !name.includes('/') && SAFE_NAME.test(name);
 }
 
 function toBuf(b64: unknown): Buffer {

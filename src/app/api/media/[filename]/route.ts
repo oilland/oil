@@ -6,5 +6,5 @@ export const runtime = 'nodejs';
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params;
-  return mediaGetResponse(decodeURIComponent(filename));
+  return mediaGetResponse(filename);
 }
