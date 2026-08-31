@@ -74,7 +74,15 @@ export async function saveProduct(formData: FormData) {
   if (images.length > 0) {
     await prisma.productImage.deleteMany({ where: { productId: product.id } });
     await prisma.productImage.createMany({
-      data: images.map((url, i) => ({ productId: product.id, url, alt: name, sortOrder: i, isMain: i === 0 }))
+      data: images.map((url, i) => {
+        let fileName: string | null = null;
+        try {
+          fileName = decodeURIComponent(url.split('/').pop() || '') || null;
+        } catch {
+          fileName = url.split('/').pop() || null;
+        }
+        return { productId: product.id, url, alt: name, fileName, sortOrder: i, isMain: i === 0 };
+      })
     });
   }
   if (specs.length > 0) {

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'node:crypto';
 import { getSession } from '@/lib/session';
 import { hasPermission } from '@/lib/permissions';
 import { compressImage } from '@/lib/image-compress';
-import { saveMediaFile } from '@/lib/media';
+import { saveMediaFile, seoFilename } from '@/lib/media';
 
 const ALLOWED: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -61,7 +60,7 @@ export async function POST(req: NextRequest) {
     // فشرده‌سازی هوشمند: حجم را تا حد ممکن کم می‌کند بدون افت محسوس کیفیت
     const { data, ext } = await compressImage(buf, file.type);
 
-    const name = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}`;
+    const name = seoFilename(file.name, ext);
     // ماندگار در PostgreSQL (+ کش دیسک). روی لیارا بدون Disk، فقط دیتابیس
     // جلوی پریدن عکس بعد از دیپلوی/ری‌استارت را می‌گیرد.
     const mime = ALLOWED[file.type] === ext ? file.type : (
@@ -74,7 +73,7 @@ export async function POST(req: NextRequest) {
     );
     await saveMediaFile(name, data, mime);
 
-    return NextResponse.json({ url: `/api/media/${name}`, name });
+    return NextResponse.json({ url: `/api/media/${encodeURIComponent(name)}`, name });
   } catch (e) {
     console.error('upload error:', e);
     return NextResponse.json({ error: 'خطا در ذخیره فایل در دیتابیس' }, { status: 500 });

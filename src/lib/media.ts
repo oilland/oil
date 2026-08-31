@@ -25,6 +25,31 @@ export function mimeFromFilename(filename: string): string {
   return MIME_FROM_EXT[ext] || 'application/octet-stream';
 }
 
+/** نام اصلی فایل را برای سئو نگه می‌دارد (فاصله → خط تیره، کاراکتر خطرناک حذف). */
+export function seoFilename(original: string, ext: string): string {
+  const base = (original || '').replace(/\\/g, '/').split('/').pop() || '';
+  let stem = base.replace(/\.[^.]+$/, '');
+  try {
+    stem = stem.normalize('NFC');
+  } catch {
+    /* ignore */
+  }
+  stem = stem
+    .replace(/\s+/g, '-')
+    .replace(/[^\p{L}\p{N}._-]+/gu, '-')
+    .replace(/-+/g, '-')
+    .replace(/^[.-]+|[.-]+$/g, '')
+    .toLowerCase();
+  if (stem.length > 80) stem = stem.slice(0, 80).replace(/-+$/g, '');
+  if (!stem) stem = `image-${Date.now()}`;
+  const e = ext.replace(/^\./, '').toLowerCase();
+  return `${stem}.${e}`;
+}
+
+export function isSafeMediaName(name: string): boolean {
+  return /^[\p{L}\p{N}._-]+$/u.test(name) && !name.includes('..') && name.length <= 120;
+}
+
 function toBuf(b64: unknown): Buffer {
   if (Buffer.isBuffer(b64)) return b64;
   if (b64 instanceof Uint8Array) return Buffer.from(b64);

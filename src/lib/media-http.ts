@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { readMediaFile, mimeFromFilename } from '@/lib/media';
+import { readMediaFile, mimeFromFilename, isSafeMediaName } from '@/lib/media';
 
 export async function mediaGetResponse(rawName: string) {
   const name = rawName.replace(/^\/+/, '').split('/').pop() || '';
-  if (!/^[A-Za-z0-9._-]+$/.test(name)) {
+  if (!isSafeMediaName(name)) {
     return new NextResponse('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } });
   }
 
