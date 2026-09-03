@@ -24,14 +24,21 @@ import {
   IconLogOut,
   IconX,
   IconMenu,
-  IconSparkles
+  IconSparkles,
+  IconChart
 } from '@/components/icons';
 
 type NavItem = { href: string; label: string; icon: ComponentType<{ className?: string }>; perm?: string };
 type NavGroup = { title: string; items: NavItem[] };
 
 const GROUPS: NavGroup[] = [
-  { title: 'اصلی', items: [{ href: '/admin', label: 'داشبورد', icon: IconGrid, perm: 'dashboard.view' }] },
+  {
+    title: 'اصلی',
+    items: [
+      { href: '/admin', label: 'داشبورد', icon: IconGrid, perm: 'dashboard.view' },
+      { href: '/admin/stats', label: 'آمار بازدید', icon: IconChart, perm: 'dashboard.view' }
+    ]
+  },
   {
     title: 'فروشگاه',
     items: [

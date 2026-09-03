@@ -4,6 +4,7 @@ import { Footer } from '@/components/shop/Footer';
 import { getCategoryTree } from '@/lib/queries';
 import { getSettings } from '@/lib/settings';
 import { getSession } from '@/lib/session';
+import { VisitTracker } from '@/components/shop/VisitTracker';
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
   const [categories, settings, session] = await Promise.all([
@@ -14,6 +15,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
 
   return (
     <ShopProvider>
+      <VisitTracker />
       <div className="flex min-h-screen flex-col">
         <Header
           categories={categories}

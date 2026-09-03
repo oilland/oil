@@ -11,6 +11,7 @@ import { uniqueSlug } from './slug';
 import { MIGRATION_SQL } from './migration-sql';
 import { INDUSTRIAL, MOTOR } from './seed-data';
 import { restoreMediaCacheFromDb, ensureMediaTable, rewriteUploadUrlsToApi } from './media';
+import { ensureAnalyticsTable } from './analytics';
 
 // ── Categories ───────────────────────────────────────────────────────────────
 const PARENT_CATS = [
@@ -111,6 +112,7 @@ async function tablesExist(): Promise<boolean> {
 /** پچ‌های schema برای دیتابیس‌های از قبل ساخته‌شده (لیارا) — idempotent */
 async function ensureSchemaPatches() {
   await ensureMediaTable();
+  await ensureAnalyticsTable();
 }
 
 async function createTables() {

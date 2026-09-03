@@ -561,3 +561,15 @@ model MediaFile {
   data      Bytes
   createdAt DateTime @default(now())
 }
+
+// آمار بازدید روزانه — kind: path | ref | uniq
+model AnalyticsDaily {
+  id    String   @id @default(cuid())
+  day   DateTime @db.Date
+  kind  String
+  key   String
+  views Int      @default(0)
+
+  @@unique([day, kind, key])
+  @@index([day, kind])
+}

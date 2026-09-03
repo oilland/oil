@@ -66,7 +66,10 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-extrabold text-slate-900">داشبورد مدیریت</h1>
-        <Link href="/admin/products/new" className="btn-primary">+ محصول جدید</Link>
+        <div className="flex gap-2">
+          <Link href="/admin/stats" className="btn-outline">آمار بازدید</Link>
+          <Link href="/admin/products/new" className="btn-primary">+ محصول جدید</Link>
+        </div>
       </div>
 
       {/* Stats */}
