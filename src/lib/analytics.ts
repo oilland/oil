@@ -65,9 +65,9 @@ export function isBot(ua: string): boolean {
 
 async function bump(day: string, kind: string, key: string, increment = 1) {
   await prisma.$executeRaw`
-    INSERT INTO "AnalyticsDaily" (id, day, kind, key, views)
+    INSERT INTO "AnalyticsDaily" ("id", "day", "kind", "key", "views")
     VALUES (${nid()}, CAST(${day} AS DATE), ${kind}, ${key}, ${increment})
-    ON CONFLICT (day, kind, key) DO UPDATE SET views = "AnalyticsDaily".views + EXCLUDED.views
+    ON CONFLICT ("day", "kind", "key") DO UPDATE SET "views" = "AnalyticsDaily"."views" + EXCLUDED."views"
   `;
 }
 
@@ -80,17 +80,33 @@ export async function recordVisit(opts: { path: string; referrer?: string; visit
   const ref = cleanRefHost(opts.referrer || '');
   if (ref) await bump(day, 'ref', ref, 1);
   await prisma.$executeRaw`
-    INSERT INTO "AnalyticsDaily" (id, day, kind, key, views)
+    INSERT INTO "AnalyticsDaily" ("id", "day", "kind", "key", "views")
     VALUES (${nid()}, CAST(${day} AS DATE), ${'uniq'}, ${opts.visitorId}, 1)
-    ON CONFLICT (day, kind, key) DO NOTHING
+    ON CONFLICT ("day", "kind", "key") DO NOTHING
   `;
 }
 
-export async function analyticsRange(from: string, to: string) {
-  await ensureAnalyticsTable();
-  const rows = await prisma.$queryRaw<{ kind: string; key: string; views: number; day: Date }[]>`
-    SELECT kind, key, views, day FROM "AnalyticsDaily"
-    WHERE day >= CAST(${from} AS DATE) AND day <= CAST(${to} AS DATE)
-  `;
-  return rows;
+export async function analyticsRange(from: string, to: string): Promise<{ kind: string; key: string; views: number; day: string }[]> {
+  try {
+    await ensureAnalyticsTable();
+    const rows = await prisma.$queryRaw<{ kind: string; key: string; views: number | bigint; day: string }[]>`
+      SELECT kind, "key" AS key, views, to_char(day, 'YYYY-MM-DD') AS day
+      FROM "AnalyticsDaily"
+      WHERE day >= CAST(${from} AS DATE) AND day <= CAST(${to} AS DATE)
+    `;
+    return (rows || []).map((r) => ({
+      kind: String(r.kind || ''),
+      key: String(r.key || ''),
+      views: Number(r.views || 0),
+      day: String(r.day || '').slice(0, 10)
+    }));
+  } catch (e) {
+    console.error('[analytics] range failed:', e);
+    try {
+      await ensureAnalyticsTable();
+    } catch {
+      /* ignore */
+    }
+    return [];
+  }
 }

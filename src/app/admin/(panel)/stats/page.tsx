@@ -9,13 +9,31 @@ export const metadata = { title: 'آمار بازدید' };
 export const dynamic = 'force-dynamic';
 
 function pathLabel(p: string) {
-  if (p === '/') return 'صفحه اصلی';
-  if (p === '/products') return 'محصولات';
-  if (p === '/blog') return 'وبلاگ';
-  if (p === '/vehicle') return 'انتخاب خودرو';
-  if (p.startsWith('/products/')) return 'محصول: ' + decodeURIComponent(p.slice('/products/'.length));
-  if (p.startsWith('/blog/')) return 'مقاله: ' + decodeURIComponent(p.slice('/blog/'.length));
-  return p;
+  let s = p || '/';
+  try {
+    s = decodeURIComponent(s);
+  } catch {
+    /* keep raw */
+  }
+  if (s === '/') return 'صفحه اصلی';
+  if (s === '/products') return 'محصولات';
+  if (s === '/blog') return 'وبلاگ';
+  if (s === '/vehicle') return 'انتخاب خودرو';
+  if (s.startsWith('/products/')) return 'محصول: ' + s.slice('/products/'.length);
+  if (s.startsWith('/blog/')) return 'مقاله: ' + s.slice('/blog/'.length);
+  return s;
+}
+
+function toDay(d: unknown): string {
+  if (!d) return '';
+  if (typeof d === 'string') return d.slice(0, 10);
+  try {
+    const x = new Date(d as string);
+    if (Number.isNaN(x.getTime())) return String(d).slice(0, 10);
+    return x.toISOString().slice(0, 10);
+  } catch {
+    return String(d).slice(0, 10);
+  }
 }
 
 function sum(rows: { views: number }[]) {
@@ -26,7 +44,13 @@ export default async function StatsPage() {
   const today = tehranDayStr();
   const d7 = addDaysStr(today, -6);
   const d30 = addDaysStr(today, -29);
-  const rows = await analyticsRange(d30, today);
+  let rows: { kind: string; key: string; views: number; day: string }[] = [];
+  try {
+    rows = await analyticsRange(d30, today);
+  } catch (e) {
+    console.error('[stats]', e);
+    rows = [];
+  }
 
   const todayRows = rows.filter((r) => toDay(r.day) === today);
   const weekRows = rows.filter((r) => toDay(r.day) >= d7);
@@ -41,6 +65,7 @@ export default async function StatsPage() {
   for (const r of rows) {
     if (r.kind !== 'path') continue;
     const k = toDay(r.day);
+    if (!k) continue;
     byDay.set(k, (byDay.get(k) ?? 0) + Number(r.views));
   }
   const series: number[] = [];
@@ -48,7 +73,11 @@ export default async function StatsPage() {
   for (let i = 29; i >= 0; i--) {
     const d = addDaysStr(today, -i);
     series.push(byDay.get(d) ?? 0);
-    labels.push(formatShortDate(d + 'T00:00:00.000Z'));
+    try {
+      labels.push(formatShortDate(`${d}T12:00:00.000Z`));
+    } catch {
+      labels.push(d);
+    }
   }
 
   const pathMap = new Map<string, number>();
@@ -59,7 +88,7 @@ export default async function StatsPage() {
   const topPages = [...pathMap.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
-    .map(([label, value]) => ({ label: pathLabel(label), value }));
+    .map(([label, value]) => ({ label: pathLabel(label), value: Number(value) }));
 
   const refMap = new Map<string, number>();
   for (const r of weekRows) {
@@ -69,7 +98,7 @@ export default async function StatsPage() {
   const topRefs = [...refMap.entries()]
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
-    .map(([label, value]) => ({ label, value }));
+    .map(([label, value]) => ({ label, value: Number(value) }));
 
   return (
     <div className="space-y-6">
@@ -90,7 +119,7 @@ export default async function StatsPage() {
 
       <div className="card p-6">
         <h2 className="mb-4 text-sm font-extrabold text-slate-900">نمودار بازدید ۳۰ روز</h2>
-        <LineChart data={series} labels={[labels[0], labels[14], labels[29]]} />
+        <LineChart data={series} labels={[labels[0] || '', labels[14] || '', labels[29] || '']} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
@@ -105,9 +134,4 @@ export default async function StatsPage() {
       </div>
     </div>
   );
-}
-
-function toDay(d: Date | string): string {
-  const x = new Date(d);
-  return x.toISOString().slice(0, 10);
 }
