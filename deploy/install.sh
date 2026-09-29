@@ -98,7 +98,7 @@ fi
 if [ -n "$LIARA_URL" ]; then
   say "گرفتن نسخهٔ کامل از لیارا…"
   # از ابزار داخل داکر استفاده می‌کنیم تا خطای اختلاف نسخهٔ Postgres پیش نیاید
-  docker run --rm postgres:16-alpine pg_dump --no-owner --no-privileges --clean --if-exists "$LIARA_URL" > /tmp/oilland.sql
+  docker run --rm postgres:17-alpine pg_dump --no-owner --no-privileges --clean --if-exists "$LIARA_URL" > /tmp/oilland.sql
   ok "دریافت شد: $(du -h /tmp/oilland.sql | cut -f1)"
   say "بالا آوردن دیتابیس روی سرور…"
   docker compose -f "$COMPOSE_FILE" up -d db
