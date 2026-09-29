@@ -26,6 +26,8 @@ COPY --from=build /app/public ./public
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/next.config.mjs ./next.config.mjs
+# کلاینت Prisma را در ایمیج نهایی تولید کن (وگرنه در زمان اجرا خطای «did not initialize» می‌دهد)
+RUN npx prisma generate
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 EXPOSE 3000
