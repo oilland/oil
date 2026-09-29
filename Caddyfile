@@ -1,0 +1,8 @@
+# روغن‌لند — پیکربندی Caddy
+# SITE_ADDRESS از فایل .env خوانده می‌شود.
+#  • قبل از وصل‌شدن دامنه:  SITE_ADDRESS=:80        (بدون HTTPS، فقط برای تست)
+#  • بعد از وصل‌شدن دامنه:  SITE_ADDRESS=oilland.shop (HTTPS خودکار می‌گیرد)
+{$SITE_ADDRESS} {
+	encode gzip zstd
+	reverse_proxy app:3000
+}
