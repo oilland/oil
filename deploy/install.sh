@@ -86,9 +86,15 @@ fi
 
 # ── ۶) آوردن دیتا و عکس‌ها از لیارا ─────────────────────────
 say "۶/۷ انتقال دیتا و عکس‌ها از لیارا"
-echo "   (اگر قبلاً این کار را کرده‌ای، می‌توانی رد کنی.)" > /dev/tty
-ask "آدرس دیتابیس لیارا را paste کن (یا Enter برای رد شدن):"
-LIARA_URL="$REPLY"
+if [ -n "${LIARA_DB_URL:-}" ]; then
+  LIARA_URL="$LIARA_DB_URL"   # از قبل داده شده (حالت یک‌کلیک)
+elif [ "${NONINTERACTIVE:-0}" != "1" ] && [ -e /dev/tty ]; then
+  echo "   (اگر قبلاً این کار را کرده‌ای، می‌توانی رد کنی.)" > /dev/tty
+  ask "آدرس دیتابیس لیارا را paste کن (یا Enter برای رد شدن):"
+  LIARA_URL="$REPLY"
+else
+  LIARA_URL=""
+fi
 if [ -n "$LIARA_URL" ]; then
   say "گرفتن نسخهٔ کامل از لیارا…"
   pg_dump --no-owner --no-privileges --clean --if-exists "$LIARA_URL" > /tmp/oilland.sql
@@ -110,10 +116,12 @@ docker compose -f "$COMPOSE_FILE" up -d --build
 
 # ── دامنه (اختیاری) ────────────────────────────────────────
 IP="$(curl -fsSL https://api.ipify.org 2>/dev/null || echo 'IP_SERVER')"
-echo "" > /dev/tty
-ask "دامنه‌ات را بنویس (مثلاً oilland.shop) یا Enter برای بعداً:"
-DOMAIN="$REPLY"
-if [ -n "$DOMAIN" ]; then
+if [ -z "${DOMAIN:-}" ] && [ "${NONINTERACTIVE:-0}" != "1" ] && [ -e /dev/tty ]; then
+  echo "" > /dev/tty
+  ask "دامنه‌ات را بنویس (مثلاً oilland.shop) یا Enter برای بعداً:"
+  DOMAIN="$REPLY"
+fi
+if [ -n "${DOMAIN:-}" ]; then
   sed -i "s|^SITE_ADDRESS=.*|SITE_ADDRESS=${DOMAIN}|" .env
   sed -i "s|^APP_URL=.*|APP_URL=https://${DOMAIN}|" .env
   docker compose -f "$COMPOSE_FILE" up -d
